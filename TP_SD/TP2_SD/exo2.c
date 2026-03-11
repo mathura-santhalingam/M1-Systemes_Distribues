@@ -2,10 +2,15 @@
 #include <stdio.h>
 #include <time.h>
 #include "mpi.h"
+#include <unistd.h>
 
 /*  mpicc -Wall exo2.c -o exo2
     mpirun -np 2 ./exo2 => erreur
-    mpirun -np 4 ./exo2
+    mpirun -np 8 ./exo2
+
+    N.B : on ne voyait pas l'inondation car le processus 0 est trop rapide :
+    il réussit à envoyer à tous ses voisins avant que quique ce soit n'envoie à son tour pour le devancer.
+    Donc j'ai mis un "usleep(50000);" (#include <unistd.h>) pour un peu plus voir l'effet de l'inondation.
 */
 
 int main(int argc, char** argv) {
@@ -35,6 +40,7 @@ int main(int argc, char** argv) {
         // Envoi à tous les autres (graphe complet)
         for (i = 1; i < n; i++) {
             MPI_Send(msg, 2, MPI_INT, i, 0, MPI_COMM_WORLD);
+            usleep(50000);
         }
     } 
     else {
