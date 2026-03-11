@@ -35,7 +35,7 @@ int main(int argc, char **argv) {
     if (id == 0) {
         // Génération d'un nb aléat de val aléatoires
         srand(time(NULL));
-        taille_msg = (rand() % 10) + 1;
+        taille_msg = (rand() % 10) + 1;  // +1 car malloc(0) => erreur
         
         // Allocation de mémoire
         msg = (int *)malloc(taille_msg * sizeof(int));

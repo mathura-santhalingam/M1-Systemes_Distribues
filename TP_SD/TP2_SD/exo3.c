@@ -27,7 +27,7 @@ int main(int argc, char** argv) {
     if (id == 0) {
         srand(time(NULL));
         // Taille du msg aléatoire entre 1 et 10
-        taille_msg = (rand() % 10) + 1;
+        taille_msg = (rand() % 10) + 1;  // +1 car malloc(0) => erreur
         
         // Allocation dynamique pour le processus 0
         msg = (int *)malloc(taille_msg * sizeof(int));

@@ -27,7 +27,7 @@ int main(int argc, char** argv) {
 
     if (id == 0) {
         srand(time(NULL));
-        taille_msg = (rand() % 10) + 1;
+        taille_msg = (rand() % 10) + 1; // +1 car malloc(0) => erreur
         msg = (int *)malloc(taille_msg * sizeof(int));
 
         for (i = 0; i < taille_msg; i++) {
