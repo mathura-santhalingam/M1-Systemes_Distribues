@@ -4,6 +4,8 @@
 #include "mpi.h"
 #include <unistd.h>
 
+// IMPLÉMENTATION DE L'ALGO FLOOD(r)
+
 /*  mpicc -Wall exo2.c -o exo2
     mpirun -np 2 ./exo2 => erreur
     mpirun -np 8 ./exo2

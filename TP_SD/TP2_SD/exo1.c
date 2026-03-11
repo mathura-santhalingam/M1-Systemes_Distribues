@@ -3,6 +3,8 @@
 #include <time.h>
 #include "mpi.h"
 
+// IMPLÉMENTATION DE L'ALGO CASTt(r)
+
 /*  mpicc -Wall exo1.c -o exo1
     mpirun -np 4 ./exo1
 */
@@ -18,17 +20,19 @@ int main(int argc, char** argv) {
     MPI_Comm_rank(MPI_COMM_WORLD, &id);
 
     if (n < 2) {
-        if (id == 0) printf("Erreur : Il faut au moins 2 processus.\n");
+        if (id == 0) {
+            printf("Erreur : Il faut au moins 2 processus.\n");
+        }
         MPI_Finalize();
         return 1;
     }
 
-    // Création des valeurs aléatoires générées (par la racine) à envoyer
     if (id == 0) {
+    // Création des valeurs aléatoires générées (par la racine) à envoyer
         srand(time(NULL));
         val_a_env[0] = rand() % 100;
         val_a_env[1] = rand() % 100;
-        printf("Processus 0 a genere le message : [%d, %d]\n", val_a_env[0], val_a_env[1]);
+        printf("Processus 0 a généré le message : [%d, %d]\n", val_a_env[0], val_a_env[1]);
 
         // La racine envoie à ses enfants
         int fils_gauche = 2 * id + 1;
