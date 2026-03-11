@@ -1,51 +1,57 @@
-#include <stdio.h>
 #include <stdlib.h>
+#include <stdio.h>
 #include <time.h>
-#include "mpi.h" //chargement de la librairie MPI
+#include "mpi.h"
 
-int main(){
-    int nb_processus, id;
-    int message[2]; // car le message contient 2 entiers
+/*  mpicc -Wall exo2.c -o exo2
+    mpirun -np 2 ./exo2 => erreur
+    mpirun -np 4 ./exo2
+*/
+
+int main(int argc, char** argv) {
+    int n, id, i;
+    int msg[2];
     MPI_Status status;
 
-    MPI_Init(NULL,NULL); // déclare un communicateur : MPI_COMM_WORLD
-    MPI_Comm_size(MPI_COMM_WORLD,&nb_processus);
-    MPI_Comm_rank(MPI_COMM_WORLD,&id);
+    MPI_Init(&argc, &argv);
+    MPI_Comm_size(MPI_COMM_WORLD, &n);
+    MPI_Comm_rank(MPI_COMM_WORLD, &id);
 
-    if(id == 0) {
-        //on va générer des valeurs aléatoires
-        srand(time(NULL));
-        message[0] = rand() % 100;
-        message[1] = rand() % 100;
-        printf("L'entité 0 a généré le message [%d, %d]\n", message[0],message[1]);
-        // envoi
-        int i;
-        for (i = 0; i < nb_processus; i++) {
-            if (i != id){
-                MPI_Send(message, 2, MPI_INT, i, 0, MPI_COMM_WORLD);
-            }
+    if (n < 2) {
+        if (id == 0) {
+            printf("Erreur: il faut au moins 2 processus.\n");
         }
-    // reception
-    } else {
-        MPI_Probe(MPI_ANY_SOURCE, MPI_ANY_TAG, MPI_COMM_WORLD, &status); // rec taille du msg
-        //printf("Je suis %d et j'envoie la valeur %d à %d.\n", identifiant, k, (identifiant+1)%2);
-        //MPI_Send(&k,1,MPI_INT,((identifiant+1)%2),0,MPI_COMM_WORLD);
-        int taille;
-        MPI_Get_count(&status, MPI_INT, &taille);
-        //printf("taille = %d\n", taille);
-        MPI_Recv(message, taille, MPI_INT, status.MPI_SOURCE, status.MPI_TAG, MPI_COMM_WORLD, &status);
-        printf("Je suis %d et j'ai reçu [%d,%d] de %d.\n", id, message[0],message[1], status.MPI_SOURCE);
-        
-        int expediteur = status.MPI_SOURCE;
+        MPI_Finalize();
+        return 1;
+    }
 
-        // envoyer message à tous les voisins u différents de 0 et différents de l'expediteur
-        for(int u = 0; u < nb_processus; u++) {
-            if (u != id && u != expediteur) {
-                MPI_Send(message, 2, MPI_INT, u, 1, MPI_COMM_WORLD);
+    if (id == 0) {
+        // Génération uniquement par l'initiateur
+        srand(time(NULL));
+        msg[0] = rand() % 100;
+        msg[1] = rand() % 100;
+        printf("Processus 0 lance l'inondation avec [%d, %d]\n", msg[0], msg[1]);
+
+        // Envoi à tous les autres (graphe complet)
+        for (i = 1; i < n; i++) {
+            MPI_Send(msg, 2, MPI_INT, i, 0, MPI_COMM_WORLD);
+        }
+    } 
+    else {
+        // Réception de n'importe qui
+        MPI_Recv(msg, 2, MPI_INT, MPI_ANY_SOURCE, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
+        
+        // Affichage demandé par l'énoncé
+        printf("Processus %d a recu [%d, %d] du processus %d\n", id, msg[0], msg[1], status.MPI_SOURCE);
+
+        // Envoi à tous les voisins sauf l'expéditeur ET sauf soi-même
+        for (i = 0; i < n; i++) {
+            if (i != status.MPI_SOURCE && i != id) {
+                MPI_Send(msg, 2, MPI_INT, i, 0, MPI_COMM_WORLD);
             }
         }
     }
+
     MPI_Finalize();
     return 0;
-    } 
-    
+}
