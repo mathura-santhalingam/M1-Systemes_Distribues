@@ -44,7 +44,7 @@ int main(int argc, char** argv) {
         }
         
         // Poser c <- 2(# voisins)  // c sera le nombre de reception à faire, or dans un graphe complet, r a (n-1) voisins
-        c = 2 * (n - 1);
+        c = 2 * (n - 2);
     } else { 
         // Rec (k, 0) d'un voisin père (inconnu)
         // On force la balise à 0 pour être sûr de capter la première inondation
