@@ -63,3 +63,69 @@ int main(int argc, char** argv) {
     MPI_Finalize();
     return 0;
 }
+
+/*
+            FLOOD(4) APPLIQUÉ À UN GRAPHE :
+#include <stdlib.h>
+#include <stdio.h>
+#include <time.h>
+#include "mpi.h"
+
+int main(int argc, char** argv) {
+    int n, id;
+    int msg[2];
+    MPI_Status status;
+
+    MPI_Init(&argc, &argv);
+    MPI_Comm_size(MPI_COMM_WORLD, &n);
+    MPI_Comm_rank(MPI_COMM_WORLD, &id);
+
+    if (n != 6) {
+        if (id == 0) printf("Erreur: il faut 6 processus.\n");
+        MPI_Finalize(); return 1;
+    }
+
+    // ---------------------------------------------------
+    // TOPOLOGIE DU GRAPHE G => 6 = nombre de processus, 4 = nombre max de degré, -1 = pour combler les vides.
+    // ---------------------------------------------------
+    int degres[6] = {3, 2, 3, 4, 1, 1};
+    int voisins[6][4] = {
+        {1, 2, 3, -1}, // Voisins de 0
+        {0, 3, -1, -1}, // Voisins de 1
+        {0, 3, 5, -1}, // Voisins de 2
+        {0, 1, 2, 4},  // Voisins de 3
+        {3, -1, -1, -1},// Voisins de 4
+        {2, -1, -1, -1} // Voisins de 5
+    };
+    int mon_degre = degres[id];
+
+    // ---------------------------------------------------
+    // LOGIQUE FLOOD
+    // ---------------------------------------------------
+    if (id == 4) {
+        srand(time(NULL));
+        msg[0] = rand() % 100; msg[1] = rand() % 100;
+        printf("Racine 4 lance l'inondation avec [%d, %d]\n", msg[0], msg[1]);
+
+        for (int i = 0; i < mon_degre; i++) {
+            MPI_Send(msg, 2, MPI_INT, voisins[id][i], 0, MPI_COMM_WORLD);
+        }
+    } 
+    else {
+        MPI_Recv(msg, 2, MPI_INT, MPI_ANY_SOURCE, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
+        int expediteur = status.MPI_SOURCE;
+        printf("Processus %d a recu [%d, %d] du processus %d\n", id, msg[0], msg[1], expediteur);
+
+        // On forwarde à tous nos voisins SAUF celui qui vient de nous l'envoyer
+        for (int i = 0; i < mon_degre; i++) {
+            int voisin_actuel = voisins[id][i];
+            if (voisin_actuel != expediteur) {
+                MPI_Send(msg, 2, MPI_INT, voisin_actuel, 0, MPI_COMM_WORLD);
+            }
+        }
+    }
+
+    MPI_Finalize();
+    return 0;
+}
+*/
