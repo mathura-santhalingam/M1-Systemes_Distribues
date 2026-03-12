@@ -17,6 +17,7 @@ int main(){
     MPI_Init(NULL,NULL);
     MPI_Comm_size(MPI_COMM_WORLD,&nb_processus);
     MPI_Comm_rank(MPI_COMM_WORLD,&identifiant);
+    MPI_Status status;
 
     if (nb_processus != 2){
         printf("Erreur : il faut exactement 2 processus.");
@@ -28,12 +29,10 @@ int main(){
     if(identifiant == 0){
         MPI_Send(&identifiant,1,MPI_INT,((identifiant+1)%2),0,MPI_COMM_WORLD);
 
-        MPI_Status status1;
-        MPI_Recv(&msg_recu,1,MPI_INT,((identifiant+1)%2),0,MPI_COMM_WORLD,&status1);
+        MPI_Recv(&msg_recu,1,MPI_INT,((identifiant+1)%2),0,MPI_COMM_WORLD,&status);
         printf("Je suis %d et j'ai reçu l'identifiant de %d.\n", identifiant, (identifiant+1)%2);
     } else {
-        MPI_Status status2;
-        MPI_Recv(&msg_recu,1,MPI_INT,((identifiant+1)%2),0,MPI_COMM_WORLD,&status2);
+        MPI_Recv(&msg_recu,1,MPI_INT,((identifiant+1)%2),0,MPI_COMM_WORLD,&status);
         printf("Je suis %d et j'ai reçu l'identifiant de %d.\n", identifiant, (identifiant+1)%2);
         
         MPI_Send(&identifiant,1,MPI_INT,((identifiant+1)%2),0,MPI_COMM_WORLD);

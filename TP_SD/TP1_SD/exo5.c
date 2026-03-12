@@ -21,7 +21,7 @@ int main(){
     if (nb_processus != 2){
         printf("Erreur : il faut exactement 2 processus.");
         MPI_Finalize();
-        exit(1);
+        return 1;
     }
 
     if(identifiant == 0){
