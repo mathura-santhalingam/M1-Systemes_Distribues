@@ -1,4 +1,13 @@
-*
-!*/
-!*.*
-!.gitignore
+# --- Fichiers système macOS ---
+.DS_Store
+**/.DS_Store
+
+# --- Configuration locale VS Code ---
+.vscode/
+**/.vscode/
+
+# --- Fichiers de compilation C/C++ (Recommandé) ---
+*.o
+*.out
+*.app
+*.dSYM/
