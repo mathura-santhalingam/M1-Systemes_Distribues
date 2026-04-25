@@ -2,6 +2,11 @@
 #include <stdlib.h>
 #include "mpi.h"
 
+/* IMPLÉMENTATION D'UN ÉCHANGE ENTRE DEUX PROCESSUS : Échange croisé des identifiants (Communication asymétrique)
+Les rôles sont codés en dur selon l'identifiant.
+Le processus 0 envoie puis reçoit. Le processus 1 reçoit puis envoie.
+C'est parfait pour UN SEUL échange (lourd pour aller-retour) */
+
 /*  mpicc -Wall exo4.c -o exo4
     mpirun -np nb_processus ./exo4
 
@@ -9,6 +14,7 @@
     MPI_Recv(buffer,k,MPI_Type,origine_id,balise,MPI_COMM_WORLD,&status); avec status de type MPI_Status qui donne détails sur msg_recu
 */
 
+// Échange entre de 
 
 int main(){
     int nb_processus, identifiant;
@@ -20,7 +26,9 @@ int main(){
     MPI_Status status;
 
     if (nb_processus != 2){
-        printf("Erreur : il faut exactement 2 processus.");
+        if(identifiant == 0) { // pour n'afficher qu'une fois le message d'erreur
+            printf("Erreur : il faut exactement 2 processus.");
+        }        
         MPI_Finalize();
         exit(1);
     }
