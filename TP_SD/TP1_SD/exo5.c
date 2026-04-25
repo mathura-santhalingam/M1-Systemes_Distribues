@@ -2,7 +2,9 @@
 #include <stdlib.h>
 #include "mpi.h" //chargement de la librairie MPI
 
-/*  mpicc -Wall exo5.c -o exo5
+// IMPLÉMENTATION : Échange croisé de variables distinctes (Communication asymétrique)
+
+/*  mpicc -Wall exo5.c -o exo5.exe
     mpirun -np nb_processus ./exo5
 */
 
@@ -19,9 +21,11 @@ int main(){
     MPI_Status status;
 
     if (nb_processus != 2){
-        printf("Erreur : il faut exactement 2 processus.");
+        if(identifiant == 0) { // pour n'afficher qu'une fois le message d'erreur
+            printf("Erreur : il faut exactement 2 processus.");
+        }        
         MPI_Finalize();
-        return 1;
+        exit(1);
     }
 
     if(identifiant == 0){

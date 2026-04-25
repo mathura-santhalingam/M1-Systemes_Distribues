@@ -2,8 +2,8 @@
 #include <stdlib.h>
 #include "mpi.h"
 
-/*  mpicc -Wall exo6.c -o exo6
-    mpirun -np nb_processus ./exo6
+/*  mpicc -Wall exo6.c -o exo6.exe
+    mpirun -np nb_processus ./exo6.exe
 */
 
 // Attention, MPI synchronise les messages, pas les prints
@@ -11,7 +11,7 @@
 int main(int argc, char** argv){
 
     int nb_processus, identifiant;
-    int val_a_env, msg_recu;
+    int msg;
     int n, i;
 
     MPI_Init(&argc,&argv);
@@ -42,25 +42,26 @@ int main(int argc, char** argv){
 
     // L'un des processus envoie 100, l'autre envoie 200
     if (identifiant == 0) {
-        val_a_env = 100;
+        msg = 100;
     } else {
-        val_a_env = 200;
+        msg = 200;
     }
 
     // Ping-pong :
     for (i = 0; i < n; i++) {
         if(identifiant == 0){
-            printf("[tour %d] : Je suis %d et j'envoie la valeur %d à %d.\n", i+1, identifiant, val_a_env, (identifiant+1)%2);
-            MPI_Send(&val_a_env,1,MPI_INT,((identifiant+1)%2),0,MPI_COMM_WORLD);
+            printf("[tour %d] : Je suis %d et j'envoie la valeur %d à %d.\n", i+1, identifiant, msg, (identifiant+1)%2);
+            MPI_Send(&msg,1,MPI_INT,((identifiant+1)%2),0,MPI_COMM_WORLD);
 
-            MPI_Recv(&msg_recu,1,MPI_INT,((identifiant+1)%2),0,MPI_COMM_WORLD,&status);
-            printf("[tour %d] : Je suis %d et j'ai reçu %d de %d.\n", i+1, identifiant, msg_recu, (identifiant+1)%2);
+            MPI_Recv(&msg,1,MPI_INT,((identifiant+1)%2),0,MPI_COMM_WORLD,&status);
+            printf("[tour %d] : Je suis %d et j'ai reçu %d de %d.\n", i+1, identifiant, msg, (identifiant+1)%2);
+            // remplacement de sa balle par celle qu'il vient de recevoir
         } else {
-            MPI_Recv(&msg_recu,1,MPI_INT,((identifiant+1)%2),0,MPI_COMM_WORLD,&status);
-            printf("[tour %d] : Je suis %d et j'ai reçu %d de %d.\n", i+1, identifiant, msg_recu, (identifiant+1)%2);
+            MPI_Recv(&msg,1,MPI_INT,((identifiant+1)%2),0,MPI_COMM_WORLD,&status);
+            printf("[tour %d] : Je suis %d et j'ai reçu %d de %d.\n", i+1, identifiant, msg, (identifiant+1)%2);
 
-            printf("[tour %d] : Je suis %d et j'envoie la valeur %d à %d.\n", i+1, identifiant, val_a_env, (identifiant+1)%2);
-            MPI_Send(&val_a_env,1,MPI_INT,((identifiant+1)%2),0,MPI_COMM_WORLD);
+            printf("[tour %d] : Je suis %d et j'envoie la valeur %d à %d.\n", i+1, identifiant, msg, (identifiant+1)%2);
+            MPI_Send(&msg,1,MPI_INT,((identifiant+1)%2),0,MPI_COMM_WORLD);
         }
     }
     
