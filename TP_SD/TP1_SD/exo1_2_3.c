@@ -2,6 +2,8 @@
 #include <stdlib.h>
 #include "mpi.h" //chargement de la librairie MPI
 
+// IMPLÉMENTATION : simple affichage d'un message par un processus
+
 /*  mpicc -Wall exo1_2_3.c -o exo1_2_3
     mpirun -np nb_processus ./exo1_2_3
 */
