@@ -3,7 +3,11 @@
 #include <time.h>
 #include "mpi.h"
 
-#define d 2 
+#define d 2
+
+/*  mpicc -Wall exo6.c -o exo6.exe
+    mpirun -np 8 ./exo6.exe
+*/
 
 int main(int argc, char** argv) {
     int n, id;
