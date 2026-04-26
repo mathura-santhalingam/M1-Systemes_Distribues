@@ -5,8 +5,8 @@
 
 // IMPLÉMENTATION DE L'ALGO CASTt(r)
 
-/*  mpicc -Wall exo1.c -o exo1
-    mpirun -np 4 ./exo1
+/*  mpicc -Wall exo1.c -o exo1.exe
+    mpirun -np 4 ./exo1.exe
 */
 
 int main(int argc, char** argv) {

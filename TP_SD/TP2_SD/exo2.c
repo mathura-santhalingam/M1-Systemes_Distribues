@@ -6,9 +6,9 @@
 
 // IMPLÉMENTATION DE L'ALGO FLOOD(r)
 
-/*  mpicc -Wall exo2.c -o exo2
-    mpirun -np 2 ./exo2 => erreur
-    mpirun -np 8 ./exo2
+/*  mpicc -Wall exo2.c -o exo2.exe
+    mpirun -np 2 ./exo2.exe => erreur
+    mpirun -np 8 ./exo2.exe
 
     N.B : on ne voyait pas l'inondation car le processus 0 est trop rapide :
     il réussit à envoyer à tous ses voisins avant que quique ce soit n'envoie à son tour pour le devancer.

@@ -3,9 +3,11 @@
 #include <time.h>
 #include "mpi.h"
 
-/*  mpicc -Wall exo3.c -o exo3
-    mpirun -np 2 ./exo3 => erreur
-    mpirun -np 8 ./exo3
+// IMPLÉMENTATION DE L'ALGO FLOOD(r) avec taille du message généré aléatoirement (MPI_Probe)
+
+/*  mpicc -Wall exo3.c -o exo3.exe
+    mpirun -np 1 ./exo3.exe => erreur
+    mpirun -np 8 ./exo3.exe
 */
 
 int main(int argc, char** argv) {
