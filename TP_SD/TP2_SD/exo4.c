@@ -3,16 +3,17 @@
 #include <time.h>
 #include "mpi.h"
 
-/*  mpicc -Wall exo4.c -o exo4
-    mpirun -np 2 ./exo4 => erreur
-    mpirun -np 8 ./exo4
+// IMPLÉMENTATION DE L'ALGO FLOOD(r) avec envoie d'acc_recep
+
+/*  mpicc -Wall exo4.c -o exo4.exe
+    mpirun -np 8 ./exo4.exe
 */
 
 int main(int argc, char** argv) {
     int n, id, i;
     int *msg; 
     int taille_msg;
-    int ack = 1; // L'accusé de réception
+    int acc_recep = 1; // L'accusé de réception
     MPI_Status status;
 
     MPI_Init(&argc, &argv);
@@ -49,7 +50,7 @@ int main(int argc, char** argv) {
         printf("car personne ne le réceptionne.");
     } 
     else {
-        // Réception avec la balise 0 pour ignorer les accusés de réception potentiels
+        // On sonde pour connaitre le message qui arrive avec balise en balise 0 (le msg d'inondation)
         MPI_Probe(MPI_ANY_SOURCE, 0, MPI_COMM_WORLD, &status);
         MPI_Get_count(&status, MPI_INT, &taille_msg);
         
@@ -59,7 +60,7 @@ int main(int argc, char** argv) {
         MPI_Recv(msg, taille_msg, MPI_INT, status.MPI_SOURCE, 0, MPI_COMM_WORLD, &status);
         
         // On renvoie l'entier 1 à celui qui nous a envoyé le premier message avec la balise 1
-        MPI_Send(&ack, 1, MPI_INT, status.MPI_SOURCE, 1, MPI_COMM_WORLD);
+        MPI_Send(&acc_recep, 1, MPI_INT, status.MPI_SOURCE, 1, MPI_COMM_WORLD);
         printf("Le processus %d a recu un msg de taille %d du processus %d et lui a envoyé un accusé de réceprion.\n", id, taille_msg, status.MPI_SOURCE);
         // Relais de l'inondation aux autres (balise 0)
         for (i = 0; i < n; i++) {
