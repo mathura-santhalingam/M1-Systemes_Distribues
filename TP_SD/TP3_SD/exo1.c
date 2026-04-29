@@ -5,7 +5,7 @@
 
 #define d 2 // Nombre d minimum de voisins choisis
 
-// IMPLÉMENTATION FORD-BELLMAN
+// IMPLÉMENTATION FORD-BELLMAN sur graphe aléatoire
 
 /* mpicc -Wall exo1.c -o exo1.exe
     mpirun -np 8 ./exo1.exe
@@ -166,3 +166,42 @@ int main(int argc, char** argv) {
     MPI_Finalize();
     return 0;
 }
+
+
+/* Différence entre Flood&Echo et FordBellman :
+1. La règle d'adoption du Père :
+    *   Dans le Flood & Echo : C'est la règle du "premier arrivé, premier servi". 
+        L'entité de calcul attend un message. Le tout premier voisin qui lui envoie
+        le message d'inondation devient son père définitif.
+        Si d'autres voisins lui envoient le message d'inondation une milliseconde plus tard,
+        elle les ignore complètement et se contente de leur renvoyer un accusé de réception.
+        Le père ne change jamais.
+
+    *   Dans Bellman-Ford : C'est la règle de "l'optimisation continue".
+        Un nœud ne choisit pas son père en fonction de la rapidité du réseau,
+        mais en fonction de la distance. Il regarde le message reçu :
+        si la nouvelle distance proposée est strictement meilleure (plus courte)
+        que celle qu'il connaît (Si L(u) > d + 1), alors il renie son ancien père
+        et en adopte un nouveau (Poser PERE(u) = v ). Un nœud peut donc changer de père plusieurs fois
+        au cours de l'algorithme.
+
+2. Le type d'arbre obtenu à la fin :
+    *   Dans Flood & Echo : Il produit un arbre couvrant quelconque. La forme de l'arbre dépend
+        uniquement de la vitesse physique du réseau ou de la charge des processeurs.
+        Si un chemin très long physiquement transmet son message très vite, il sera choisi,
+        ce qui peut donner un arbre très déséquilibré.
+    
+    *   Dans Bellman-Ford : Il garantit la production d'un arbre de parcours en largeur
+        (aussi appelé arbre des plus courts chemins). À la fin de l'algorithme,
+        on est absolument certain que la distance entre chaque nœud et la racine est la plus courte possible
+        en termes de nombre de sauts.
+
+3. La ré-émission des messages :
+    *   Dans Flood & Echo : Un nœud ne transmet le message d'inondation à ses voisins qu'une seule
+        et unique fois (juste après avoir adopté son père).
+    
+    *   Dans Bellman-Ford : Puisqu'un nœud peut découvrir un meilleur chemin en cours de route,
+        il doit prévenir ses voisins ! À chaque fois qu'un nœud met à jour sa distance $L(u)$,
+        il renvoie un message à tous ses voisins pour leur dire : "Eh, j'ai trouvé un chemin plus court,
+        mettez à jour vos propres distances si ça vous arrange !". Cela génère beaucoup plus de trafic réseau.  
+*/
