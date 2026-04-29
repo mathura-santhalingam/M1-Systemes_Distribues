@@ -3,7 +3,7 @@
 #include <time.h>
 #include "mpi.h"
 
-#define d 2
+#define d 2 // "nombre d choisi avec une directive define"
 
 /*  mpicc -Wall exo6.c -o exo6.exe
     mpirun -np 8 ./exo6.exe
@@ -31,7 +31,7 @@ int main(int argc, char** argv) {
         mes_choix[j] = 0; 
     }
 
-    // Choisir d entités distinctes
+    // Choisir d entités distinctes comme voisins
     srand(time(NULL) + id);
     int choisis = 0;
     
@@ -46,9 +46,10 @@ int main(int argc, char** argv) {
     }
 
     // La communication SANS Sendrecv, pour savoir qui nous a choisi
+    // Attention : une entité de calcul doit avoir au moins d voisins mais peut en avoir plus que d dans le cas où A choisi C et D comme voisins et B choisi A comme voisin => A a pour voisins B, C et D
     for (int j = 0; j < n; j++) { // boucle for car chaque entité va parler une par une à toutes les autres
         if (j != id) { 
-            int msg_envoye = mes_choix[j]; 
+            int msg_envoye = mes_choix[j]; // comme on envoie message à tlm, on leur donne ça et non notre id
             int msg_recu;
             
             // LA STRATÉGIE ANTI-DEADLOCK :
@@ -81,3 +82,17 @@ int main(int argc, char** argv) {
     MPI_Finalize();
     return 0;
 }
+
+/*Stratégie anti deadlock : attention la parité ne marche que si on est sûr
+qu'un processus pair ne parlera pas à un autre processus pair (ex ping-pong entre 2 entité ou anneau à nb processus total pair).
+Donc ici ça n'aurait pas marché puisque tout le monde parle avec tout le monde (for) y compris :
+    Le processus 2 veut parler au processus 4.
+    Le processus 2 (pair) fait un MPI_Send.
+    Le processus 4 (pair) fait un MPI_Send.
+    Résultat : Interblocage (Deadlock)
+
+Solution de " < ": La règle if (id < j) est infaillible car elle crée un ordre strict pour n'importe quelle paire de processus dans le monde.
+    Il est mathématiquement impossible que deux processus soient tous les deux plus petits que l'autre.
+    Il y aura toujours un gagnant (qui fera Send) et un perdant (qui fera Recv).
+    PARFAIT quand tout le monde veut parler avec tout le monde dans le désordre
+*/
