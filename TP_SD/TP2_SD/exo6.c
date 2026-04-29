@@ -5,6 +5,8 @@
 
 #define d 2 // "nombre d choisi avec une directive define"
 
+// IMPLÉMENTATION Création graphe aléatoire
+
 /*  mpicc -Wall exo6.c -o exo6.exe
     mpirun -np 8 ./exo6.exe
 */
