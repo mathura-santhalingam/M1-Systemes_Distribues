@@ -31,6 +31,7 @@ int main()
 taille n-1 => décalage pcq pas racine ?
 
 
+EXEMPLE MATRICE
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -44,10 +45,8 @@ int main(int argc, char** argv) {
     MPI_Comm_size(MPI_COMM_WORLD, &size);
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
 
-    // =========================================================================
     // 1. PRÉPARATION DU MESSAGE LOCAL
     // Chaque entité construit son tableau de 2 entiers aléatoires
-    // =========================================================================
     
     int k_e = 2; // Taille du message envoyé par chaque entité
     int msg_envoye[k_e]; 
@@ -63,10 +62,7 @@ int main(int argc, char** argv) {
     // Barrière purement esthétique pour l'affichage console
     MPI_Barrier(MPI_COMM_WORLD); 
 
-    // =========================================================================
-    // 2. PRÉPARATION DE LA MATRICE DE RÉCEPTION SUR LA RACINE
-    // =========================================================================
-    
+    // 2. PRÉPARATION DE LA MATRICE DE RÉCEPTION SUR LA RACINE    
     int *matrice_reception = NULL;
     
     if (rank == 0) {
@@ -77,9 +73,7 @@ int main(int argc, char** argv) {
         matrice_reception = (int*)malloc(size * k_e * sizeof(int));
     }
 
-    // =========================================================================
     // 3. LA CONCENTRATION (GATHER)
-    // =========================================================================
     
     // Règle d'or de MPI_Gather : le paramètre 'count' (ici k_e) indique
     // le nombre d'éléments envoyés PAR processus, et non le total !
@@ -89,9 +83,7 @@ int main(int argc, char** argv) {
         0, MPI_COMM_WORLD                // Le rang de la racine (0) et le communicateur
     );
 
-    // =========================================================================
     // 4. EXPLOITATION DE LA MATRICE GLOBALE PAR LA RACINE
-    // =========================================================================
     
     if (rank == 0) {
         printf("\n--- RÉSULTAT SUR LA RACINE (Construction de la matrice) ---\n");
