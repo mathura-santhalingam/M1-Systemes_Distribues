@@ -8,8 +8,8 @@
 // IMPLÉMENTATION : Diffusion de p dans une grille c x l (CART_SUB + BCAST)
 
 /*
-   Compilation : mpicc -Wall exo2_td4.c -o exo2_td4.exe
-   Exécution   : mpirun -np 8 ./exo2_td4.exe
+   Compilation : mpicc -Wall exo3_td4_v2.c -o exo3_td4_v2.exe
+   Exécution   : mpirun -np 8 ./exo3_td4_v2.exe
 */
 
 int main (int argc, char** argv){
@@ -96,7 +96,7 @@ int main (int argc, char** argv){
 
     MPI_Bcast(&moyenne, 1, MPI_DOUBLE, 0, comm_lignes); // on peut directement dire root = 0 puisque Cart_sub remappe
     MPI_Comm_free(&comm_lignes);
-    
+
     // Diffusion le long des colonnes
         
     MPI_Comm comm_col;
@@ -105,6 +105,8 @@ int main (int argc, char** argv){
 
     MPI_Bcast(&moyenne, 1, MPI_DOUBLE, 0, comm_col);
     MPI_Comm_free(&comm_col);
+
+    printf("Entité %d a la moyenne finale : %.2f\n", id_global, moyenne);
 
     MPI_Comm_free(&comm_grille);
     MPI_Finalize();

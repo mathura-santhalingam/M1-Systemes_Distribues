@@ -8,8 +8,8 @@
 // IMPLÉMENTATION : Diffusion de p dans une grille c x l
 
 /*
-   Compilation : mpicc -Wall exo2_td4.c -o exo2_td4.exe
-   Exécution   : mpirun -np 8 ./exo2_td4.exe
+   Compilation : mpicc -Wall exo3_td4.c -o exo3_td4.exe
+   Exécution   : mpirun -np 8 ./exo3_td4.exe
 */
 
 int main (int argc, char** argv){
@@ -112,6 +112,8 @@ int main (int argc, char** argv){
             MPI_Send(&moyenne, 1, MPI_DOUBLE, bas, 0, comm_grille);
         }
     }
+
+    printf("Entité %d a la moyenne finale : %.2f\n", id_global, moyenne);
 
     MPI_Comm_free(&comm_grille);
     MPI_Finalize();
