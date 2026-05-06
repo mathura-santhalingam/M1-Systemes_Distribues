@@ -82,28 +82,23 @@ int main(int argc, char** argv) {
     int l = n + 1; // Distance (L(u)), initialisée à l'infini (n+1)
     int pere = -1; // PERE(u)
     int c = 0;     // Compteur de terminaison (c)
+    int dist_recue;
 
     if (id == 0) {
         l = 0;
         pere = 0; // La racine est son propre père (ou pas de père)
         c = 2 * nb_voisins;
 
-        // Diffuser la distance 0 à tous ses voisins
+        // diffuser la distance 0 à tous ses voisins
         for (int i = 0; i < nb_voisins; i++) {
             MPI_Send(&l, 1, MPI_INT, voisins[i], TAG_DONNEE, MPI_COMM_WORLD);
         }
     } else {
-        int d_recu;
-        // On reçoit le message de n'importe quelle source
-        MPI_Recv(&d_recu, 1, MPI_INT, MPI_ANY_SOURCE, TAG_DONNEE, MPI_COMM_WORLD, &status);
-
+        MPI_Recv(&dist_recue, 1, MPI_INT, MPI_ANY_SOURCE, TAG_DONNEE, MPI_COMM_WORLD, &status);
         int v = status.MPI_SOURCE; 
-
-        l = d_recu + 1;
+        l = dist_recue + 1;
         pere = v;
-
         c = 2 * nb_voisins - 2;
-
         // Transmettre la nouvelle distance à tous les voisins SAUF au père (v)
         for (int i = 0; i < nb_voisins; i++) {
             if (voisins[i] != pere) { // car attention on est pas dans un graphe complet
@@ -118,17 +113,17 @@ int main(int argc, char** argv) {
         int tag = status.MPI_TAG;
 
         if (tag == TAG_DONNEE) {
-            int d_recu = msg_recu;
+            int dist_recue = msg_recu;
 
-            if (l > d_recu + 1) {
+            if (l > dist_recue + 1) {
                 // on a trouvé un meilleur chemin
-                int msg_donnee = d_recu + 1;
+                int msg_donnee = dist_recue + 1;
                 MPI_Send(&msg_donnee, 1, MPI_INT, pere, TAG_DONNEE, MPI_COMM_WORLD);
                 
                 int ack = 1;
                 MPI_Send(&ack, 1, MPI_INT, pere, TAG_ACK, MPI_COMM_WORLD);
                 
-                l = d_recu + 1;
+                l = dist_recue + 1;
                 pere = source; // On met à jour notre nouveau père
             } else {
                 // Le chemin n'est pas meilleur, on libère l'expéditeur
@@ -173,7 +168,7 @@ int main(int argc, char** argv) {
     *   Dans le Flood & Echo : C'est la règle du "premier arrivé, premier servi". 
         L'entité de calcul attend un message. Le tout premier voisin qui lui envoie
         le message d'inondation devient son père définitif.
-        Si d'autres voisins lui envoient le message d'inondation une milliseconde plus tard,
+        Si d'autres voisins lui envoient le message d'inondation plus tard,
         elle les ignore complètement et se contente de leur renvoyer un accusé de réception.
         Le père ne change jamais.
 
