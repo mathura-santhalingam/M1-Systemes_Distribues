@@ -54,55 +54,55 @@ int main(int argc, char** argv) {
     // Si la somme des coordonnées est divisible par 2, on est "pair"
     int est_pair = ((coords[0] + coords[1] + coords[2]) % 2 == 0);
 
-    for (int step = 0; step < it; step++) {
-        double p_vd = 0, p_vg = 0, p_vh = 0, p_vb = 0, p_vav = 0, p_var = 0;
+    for (int i = 0; i < it; i++) {
+        double msg_d = 0, msg_g = 0, msg_h = 0, msg_b = 0, msg_av = 0, msg_ar = 0;
 
         // --- DIMENSION 0 (Axe X : Gauche / Droite) ---
         if (est_pair) {
             // Le pair initie l'échange vers la droite
             MPI_Send(&p, 1, MPI_DOUBLE, v_droite, 0, comm);
-            MPI_Recv(&p_vg, 1, MPI_DOUBLE, v_gauche, 0, comm, MPI_STATUS_IGNORE);
+            MPI_Recv(&msg_g, 1, MPI_DOUBLE, v_gauche, 0, comm, MPI_STATUS_IGNORE);
             
             // Le pair initie l'échange vers la gauche
             MPI_Send(&p, 1, MPI_DOUBLE, v_gauche, 0, comm);
-            MPI_Recv(&p_vd, 1, MPI_DOUBLE, v_droite, 0, comm, MPI_STATUS_IGNORE);
+            MPI_Recv(&msg_d, 1, MPI_DOUBLE, v_droite, 0, comm, MPI_STATUS_IGNORE);
         } else {
             // L'impair attend le message venant de la gauche (envoyé par le pair)
-            MPI_Recv(&p_vg, 1, MPI_DOUBLE, v_gauche, 0, comm, MPI_STATUS_IGNORE);
+            MPI_Recv(&msg_g, 1, MPI_DOUBLE, v_gauche, 0, comm, MPI_STATUS_IGNORE);
             MPI_Send(&p, 1, MPI_DOUBLE, v_droite, 0, comm);
             
             // L'impair attend le message venant de la droite
-            MPI_Recv(&p_vd, 1, MPI_DOUBLE, v_droite, 0, comm, MPI_STATUS_IGNORE);
+            MPI_Recv(&msg_d, 1, MPI_DOUBLE, v_droite, 0, comm, MPI_STATUS_IGNORE);
             MPI_Send(&p, 1, MPI_DOUBLE, v_gauche, 0, comm);
         }
 
         // --- DIMENSION 1 (Axe Y : Bas / Haut) ---
         if (est_pair) {
             MPI_Send(&p, 1, MPI_DOUBLE, v_haut, 0, comm);
-            MPI_Recv(&p_vb, 1, MPI_DOUBLE, v_bas, 0, comm, MPI_STATUS_IGNORE);
+            MPI_Recv(&msg_b, 1, MPI_DOUBLE, v_bas, 0, comm, MPI_STATUS_IGNORE);
 
             MPI_Send(&p, 1, MPI_DOUBLE, v_bas, 0, comm);
-            MPI_Recv(&p_vh, 1, MPI_DOUBLE, v_haut, 0, comm, MPI_STATUS_IGNORE);
+            MPI_Recv(&msg_h, 1, MPI_DOUBLE, v_haut, 0, comm, MPI_STATUS_IGNORE);
         } else {
-            MPI_Recv(&p_vb, 1, MPI_DOUBLE, v_bas, 0, comm, MPI_STATUS_IGNORE);
+            MPI_Recv(&msg_b, 1, MPI_DOUBLE, v_bas, 0, comm, MPI_STATUS_IGNORE);
             MPI_Send(&p, 1, MPI_DOUBLE, v_haut, 0, comm);
 
-            MPI_Recv(&p_vh, 1, MPI_DOUBLE, v_haut, 0, comm, MPI_STATUS_IGNORE);
+            MPI_Recv(&msg_h, 1, MPI_DOUBLE, v_haut, 0, comm, MPI_STATUS_IGNORE);
             MPI_Send(&p, 1, MPI_DOUBLE, v_bas, 0, comm);
         }
 
         // --- DIMENSION 2 (Axe Z : Arrière / Avant) ---
         if (est_pair) {
             MPI_Send(&p, 1, MPI_DOUBLE, v_avant, 0, comm);
-            MPI_Recv(&p_var, 1, MPI_DOUBLE, v_arriere, 0, comm, MPI_STATUS_IGNORE);
+            MPI_Recv(&msg_ar, 1, MPI_DOUBLE, v_arriere, 0, comm, MPI_STATUS_IGNORE);
 
             MPI_Send(&p, 1, MPI_DOUBLE, v_arriere, 0, comm);
-            MPI_Recv(&p_vav, 1, MPI_DOUBLE, v_avant, 0, comm, MPI_STATUS_IGNORE);
+            MPI_Recv(&msg_av, 1, MPI_DOUBLE, v_avant, 0, comm, MPI_STATUS_IGNORE);
         } else {
-            MPI_Recv(&p_var, 1, MPI_DOUBLE, v_arriere, 0, comm, MPI_STATUS_IGNORE);
+            MPI_Recv(&msg_ar, 1, MPI_DOUBLE, v_arriere, 0, comm, MPI_STATUS_IGNORE);
             MPI_Send(&p, 1, MPI_DOUBLE, v_avant, 0, comm);
 
-            MPI_Recv(&p_vav, 1, MPI_DOUBLE, v_avant, 0, comm, MPI_STATUS_IGNORE);
+            MPI_Recv(&msg_av, 1, MPI_DOUBLE, v_avant, 0, comm, MPI_STATUS_IGNORE);
             MPI_Send(&p, 1, MPI_DOUBLE, v_arriere, 0, comm);
         }
 
@@ -110,12 +110,12 @@ int main(int argc, char** argv) {
         double somme = p;
         int nb_valeurs = 1; 
 
-        if (v_gauche  != MPI_PROC_NULL) { somme += p_vg;  nb_valeurs++; }
-        if (v_droite  != MPI_PROC_NULL) { somme += p_vd;  nb_valeurs++; }
-        if (v_bas     != MPI_PROC_NULL) { somme += p_vb;  nb_valeurs++; }
-        if (v_haut    != MPI_PROC_NULL) { somme += p_vh;  nb_valeurs++; }
-        if (v_arriere != MPI_PROC_NULL) { somme += p_var; nb_valeurs++; }
-        if (v_avant   != MPI_PROC_NULL) { somme += p_vav; nb_valeurs++; }
+        if (v_gauche  != MPI_PROC_NULL) { somme += msg_g;  nb_valeurs++; }
+        if (v_droite  != MPI_PROC_NULL) { somme += msg_d;  nb_valeurs++; }
+        if (v_bas     != MPI_PROC_NULL) { somme += msg_b;  nb_valeurs++; }
+        if (v_haut    != MPI_PROC_NULL) { somme += msg_h;  nb_valeurs++; }
+        if (v_arriere != MPI_PROC_NULL) { somme += msg_ar; nb_valeurs++; }
+        if (v_avant   != MPI_PROC_NULL) { somme += msg_av; nb_valeurs++; }
 
         p = somme / nb_valeurs;
     }

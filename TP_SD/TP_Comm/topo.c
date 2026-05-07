@@ -52,7 +52,6 @@ int main(int argc, char** argv) {
 
     // 3. RECHERCHE DE VOISINS (MPI_Cart_shift)
     if (rank == 6) {
-        printf("--- SECTION 3 : VOISINAGE (Pour l'entité 6) ---\n");
         int voisin_prec, voisin_suiv;
 
         // A. Recherche sur l'axe HORIZONTAL (Les colonnes, dimension 1)
@@ -98,7 +97,6 @@ int main(int argc, char** argv) {
 
     // On fait parler l'entité 6 pour voir ce qui s'est passé :
     if (rank == 6) {
-         printf("--- SECTION 4 : SOUS-COMMUNICATEURS ---\n");
          // Dans la ligne du haut (4, 5, 6, 7), l'entité globale 6 est la 3ème entité.
          // Son nouveau rang local sera donc 2.
          printf("Je suis le global 6. Dans mon sous-communicateur de ligne, je suis le rang local %d.\n", rank_dans_ligne);
