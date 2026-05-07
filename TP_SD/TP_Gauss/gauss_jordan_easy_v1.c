@@ -3,6 +3,19 @@
 #include <time.h>
 #include <mpi.h>
 
+/* IMPLÉMENTATION DE :
+    Admettons que chaque entité de calcul a un tableau M de k cases.
+    ÉTAPE 1 : Les deux premieres entités sont remplies de 0 et les autres ont des valeurs aléatoires.
+    ÉTAPE 2 : chaque entité lit son tableau, si elle trouve que des 0 elle ne fait rien.
+    On veut trouver, parmi les tableaux, le premier tableau qui a une valeur non nulle.
+    Donc le id le plus petit tel que le M de ce id contient une valeur non nulle.
+    Ensuite : une fois trouvé cet id, échange sa 1ère valeur non nulle avec la valeur 0 de l’entité 0 à la même position.
+    
+    Attention : utilise Bcast(buffer, k, MPI_Type, source, MPI_COMM_WORLD);
+    Attention : le buffer de reception ne doit pas ecraser directement la valeur dans le tableau car par ex un bcast d'une entité de grand id peut écraser la valeur qu'on cherchait 
+
+*/
+
 /*
    Compilation : mpicc -Wall gauss_jordan_easy_v1.c -o gauss_jordan_easy_v1.exe
    Exécution   : mpirun -np 7 ./gauss_jordan_easy_v1.exe
