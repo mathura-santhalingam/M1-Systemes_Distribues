@@ -40,7 +40,11 @@ int main(int argc, char** argv){
     // question c)
     MPI_Bcast(&msg, 1, MPI_INT, 0, MPI_COMM_WORLD); // pour que 0 diffuse à tout le monde
     // question d)
-    MPI_Bcast(&msg, 1, MPI_INT, 0, nv_comm); // pour que 0 diffuse à 1,2
+    MPI_Bcast(&msg, 1, MPI_INT, 0, nv_comm); // pour que 0 diffuse à 1,2 d'un côté et 3 diffuse à 4,5 de l'autre
+
+    if (id_global < 3) {
+        MPI_Bcast(&msg, 1, MPI_INT, 0, nv_comm); // pour que SEULEMENT 0 diffuse à 1,2 
+    }
 
     // question e)
     int dims[2] = {3, 2};
