@@ -48,6 +48,7 @@ mpirun -np <nombre_de_processus> ./mon_programme
 
 ```
 .
+├── Notes_De_Cours.pdf  # Mes prises de notes personnelles du CM
 ├── Sujets_SD/          # Sujets de TDs, TPs et examens (PDF)
 │   ├── TD1.pdf         # Modèle de communication par passage de messages
 │   ├── TD2.pdf         # Problème de la diffusion
@@ -58,7 +59,7 @@ mpirun -np <nombre_de_processus> ./mon_programme
 │   ├── TP3.pdf         # Diffusion (deuxième partie)
 │   ├── TP4.pdf         # Bellman-Ford et Dijkstra distribué
 │   ├── TP5.pdf         # Communicateurs MPI
-│   ├── SD_CM.pdf       # Notes de cours
+│   ├── SD_CM.pdf       # Notes de cours de Mr.Pournin
 │   ├── ExamenBlanc.pdf         # Examen blanc (avril 2021)
 │   └── Examen_P2_blanc.pdf     # Examen blanc (partie 2)
 └── TP_SD/              # Implémentations C avec MPI
@@ -75,5 +76,5 @@ mpirun -np <nombre_de_processus> ./mon_programme
 
 ## Références
 
-- Lionel Pournin, *Notes de cours SD_CM* — Université Sorbonne Paris Nord
-- Cyril Gavoille, *Algorithmes distribués*, Cours de Master 1 et 2, Université de Bordeaux, 2015
+- **Lionel Pournin**, *SD_CM* (dans le dossier **Sujets_SD**) — Université Sorbonne Paris Nord
+- **Cyril Gavoille**, *Algorithmes distribués*, Cours de Master 1 et 2, Université de Bordeaux, 2015
